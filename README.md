@@ -111,10 +111,10 @@ This section is about preventing undesirable usage.
 
 ### Never
 
-To make a type that can never be created, simply create an empty trait. Use this where you want to prevent compilation of specific codepaths.
+To make a type that can never be created, simply create an empty enum. Use this where you want to prevent compilation of specific codepaths.
 
 ```rust
-trait Never {}
+enum Never {}
 
 let never = Never:: // oh yeah, can't actually create one...
 ```
