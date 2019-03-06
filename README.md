@@ -95,6 +95,14 @@ This section is about the mechanical aspects of working with Rust.
 
 ## Unification and Reading the Error Messages That Matter
 
+Rust requires that arguments and return types are made explicit in function definitions. The compiler will use these explicit types at the boundaries of a function to drive type inference. It will take the input argument types and work from the top of the function toward the bottom. It will take the return type and work its way up. Hopefully they can meet in the middle. The process under the hood is actually a [little more complicated than this](http://smallcultfollowing.com/babysteps/blog/2017/03/25/unification-in-chalk-part-1/) but this simplified model is adequate to reason about this particular subject. The point is, there has to be an unbroken chain of type evidence that connects the input arguments to the return type through the body. When there is a gap in the chain, all ambiguous types will turn into errors. This is partially why rust will emit many pages of errors sometimes when there's actually only a single thing that needs to be fixed.
+
+Programming Rust is a long game. To not fall victim to compiler error fatigue, you need to minimize the effort required to deal with compiler errors. A big part of that is to just filter out the errors that don't matter, and usually the most important error to actually fix is the first error that rustc emits. You can use the `cargo watch` plugin to filter out most of these lines, and run the compiler any time you save like this:
+
+```bash
+cargo watch -s 'clear; cargo check --tests --color=always 2>&1 | head -40'
+```
+
 ## Write-Compile-Fix Loop Latency
 
 # Lockdown
