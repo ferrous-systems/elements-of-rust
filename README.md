@@ -152,3 +152,36 @@ fn main() {
     // finalized.0.a = 666;
 }
 ```
+
+### Box<FnOnce>
+
+Currently, it's not possible to call `Box<FnOnce(T) -> R>` on stable Rust. The
+common workaround is to use `Box<FnMut(T) -> R>`, store internal state inside of
+an `Option` and `take` the state out (with a potential run-time panic) in the
+call. However, a solution that statically guarantees that fn can be called at
+most once is possible. Seen in [Cargo](https://github.com/rust-lang/cargo/blob/dc83ead224d8622f748f507574e1448a28d8dcc7/src/cargo/core/compiler/job.rs#L17-L25).
+
+```rust
+trait FnBox<A, R> {
+    fn call_box(self: Box<Self>, a: A) -> R;
+}
+
+impl<A, R, F: FnOnce(A) -> R> FnBox<A, R> for F {
+    fn call_box(self: Box<F>, a: A) -> R {
+        (*self)(a)
+    }
+}
+
+fn demo(f: Box<dyn FnBox<(), String>>) -> String {
+    f.call_box(())
+}
+
+#[test]
+fn test_demo() {
+    let hello = "hello".to_string();
+    let f: Box<dyn FnBox<(), String>> = Box::new(move |()| hello);
+    assert_eq!(&demo(f), "hello");
+}
+```
+
+Note that `self: Box<Self>` is stable and object-safe.
