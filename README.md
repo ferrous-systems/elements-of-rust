@@ -8,12 +8,12 @@ This section is about improving clarity.
 
 ## Combating Rightward Pressure
 
-Code can look 
+After sparring with the compiler, it's not unusual to stand back and see several nested combinator chains or match statements. Much of the art of writing clean Rust has to do with the judicious application of de-nesting techniques.
 
 ### Basics
 
-* use `?` to flatten error handling
-* split combinator chains apart when they grow beyond one line
+* Use `?` to flatten error handling, but be careful not to convert errors into top-level enums unless it makes sense to handle them at the same point in your code. Keep separate concerns in separate types.
+* Split combinator chains apart when they grow beyond one line. Assign useful names to the intermediate steps. In many cases, a multi-line combinator chain can be more clearly rewritten as a for-loop.
 
 ### Using Blocks
 
@@ -52,6 +52,42 @@ fn spawn_threads(config: Arc<Config>) {
 ```
 
 ### Tuple Matching
+
+If you find yourself writing code that looks like:
+
+```rust
+let a = Some(5);
+let b = Some(false);
+
+let c = match a {
+    Some(a) => {
+        match b {
+            Some(b) => whatever,
+            None => other_thing,
+        }
+    }
+    None => {
+        match b {
+            Some(b) => another_thing,
+            None => a_fourth_thing,
+        }
+    }
+};
+```
+
+it can be de-nested by doing a tuple match:
+
+```rust
+let a = Some(5);
+let b = Some(false);
+
+let c = match (a, b) {
+    (Some(a), Some(b)) => whatever,
+    (Some(a), None) => other_thing,
+    (None, Some(b)) => another_thing,
+    (None, None) => a_fourth_thing,
+};
+```
 
 # Ergonomics
 
