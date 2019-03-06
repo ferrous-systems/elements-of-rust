@@ -2,7 +2,7 @@
 
 A collection of software engineering techniques for effectively expressing intent with Rust.
 
-## Lockdown
+# Lockdown
 
 This section is about preventing undesirable usage.
 
@@ -94,6 +94,10 @@ fn main() {
 }
 ```
 
+# Cleanup
+
+This section is about improving clarity.
+
 ## Combating Rightward Pressure
 
 ### Basics
@@ -103,3 +107,10 @@ fn main() {
 
 ### Tuple Matching
 
+# Ergonomics
+
+This section is about the mechanical aspects of working with Rust. 
+
+## Unification and Reading the Error Messages That Matter
+
+## Write-Compile-Fix Loop Latency
