@@ -8,6 +8,8 @@ This section is about improving clarity.
 
 ## Combating Rightward Pressure
 
+Code can look 
+
 ### Basics
 
 * use `?` to flatten error handling
@@ -17,7 +19,7 @@ This section is about improving clarity.
 
 Next time you need to spawn a `move` closure, remember that blocks are
 expressions. Seen in
-[salsa](https://github.com/salsa-rs/salsa/blob/3dc4539c7c34cb12b5d4d1bb0706324cfcaaa7ae/tests/parallel/cancellation.rs#L42-L53).
+[salsa](https://github.com/salsa-rs/salsa/blob/3dc4539c7c34cb12b5d4d1bb0706324cfcaaa7ae/tests/parallel/cancellation.rs#L42-L53) and described in more detail in [Rust pattern: Precise closure capture clauses](http://smallcultfollowing.com/babysteps/blog/2018/04/24/rust-pattern-precise-closure-capture-clauses/).
 
 ```
 // Before
