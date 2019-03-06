@@ -2,6 +2,63 @@
 
 A collection of software engineering techniques for effectively expressing intent with Rust.
 
+# Cleanup
+
+This section is about improving clarity.
+
+## Combating Rightward Pressure
+
+### Basics
+
+* use `?` to flatten error handling
+* split combinator chains apart when they grow beyond one line
+
+### Using Blocks
+
+Next time you need to spawn a `move` closure, remember that blocks are
+expressions. Seen in
+[salsa](https://github.com/salsa-rs/salsa/blob/3dc4539c7c34cb12b5d4d1bb0706324cfcaaa7ae/tests/parallel/cancellation.rs#L42-L53).
+
+```
+// Before
+fn spawn_threads(config: Arc<Config>) {
+    let config1 = Arc::clone(&config);
+    thread::spawn(move || {
+        do_x(config1);
+    });
+    let config2 = Arc::clone(&config);
+    thread::spawn(move || {
+        do_y(config2);
+    });
+}
+
+// After, no need to invent config_n names
+fn spawn_threads(config: Arc<Config>) {
+    thread::spawn({
+        let config = Arc::clone(&config);
+        move || {
+            do_x(config);
+        }
+    });
+    thread::spawn({
+        let config = Arc::clone(&config);
+        move || {
+            do_y(config);
+        }
+    });
+}
+```
+
+### Tuple Matching
+
+# Ergonomics
+
+This section is about the mechanical aspects of working with Rust. 
+
+## Unification and Reading the Error Messages That Matter
+
+## Write-Compile-Fix Loop Latency
+
 # Lockdown
 
 This section is about preventing undesirable usage.
@@ -93,60 +150,3 @@ fn main() {
     // finalized.0.a = 666;
 }
 ```
-
-# Cleanup
-
-This section is about improving clarity.
-
-## Combating Rightward Pressure
-
-### Basics
-
-* use `?` to flatten error handling
-* split combinator chains apart when they grow beyond one line
-
-### Using Blocks
-
-Next time you need to spawn a `move` closure, remember that blocks are
-expressions. Seen in
-[salsa](https://github.com/salsa-rs/salsa/blob/3dc4539c7c34cb12b5d4d1bb0706324cfcaaa7ae/tests/parallel/cancellation.rs#L42-L53).
-
-```
-// Before
-fn spawn_threads(config: Arc<Config>) {
-    let config1 = Arc::clone(&config);
-    thread::spawn(move || {
-        do_x(config1);
-    });
-    let config2 = Arc::clone(&config);
-    thread::spawn(move || {
-        do_y(config2);
-    });
-}
-
-// After, no need to invent config_n names
-fn spawn_threads(config: Arc<Config>) {
-    thread::spawn({
-        let config = Arc::clone(&config);
-        move || {
-            do_x(config);
-        }
-    });
-    thread::spawn({
-        let config = Arc::clone(&config);
-        move || {
-            do_y(config);
-        }
-    });
-}
-```
-
-### Tuple Matching
-
-# Ergonomics
-
-This section is about the mechanical aspects of working with Rust. 
-
-## Unification and Reading the Error Messages That Matter
-
-## Write-Compile-Fix Loop Latency
