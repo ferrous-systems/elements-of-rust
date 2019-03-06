@@ -1,7 +1,15 @@
 # elements-of-rust
+
 style, philosophy
 
 ## Combating Rightward Pressure
+
+### Basics
+
+* use `?` to flatten error handling
+* split combinator chains apart when they grow beyond one line
+
+### Tuple Matching
 
 ## Lockdown
 
