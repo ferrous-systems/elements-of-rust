@@ -1,13 +1,6 @@
 # :fire: Rust Programming Tipz :fire:
 
-## Combating Rightward Pressure
-
-### Basics
-
-* use `?` to flatten error handling
-* split combinator chains apart when they grow beyond one line
-
-### Tuple Matching
+A collection of software engineering techniques for effectively expressing intent with Rust.
 
 ## Lockdown
 
@@ -100,3 +93,13 @@ fn main() {
     // finalized.0.a = 666;
 }
 ```
+
+## Combating Rightward Pressure
+
+### Basics
+
+* use `?` to flatten error handling
+* split combinator chains apart when they grow beyond one line
+
+### Tuple Matching
+
