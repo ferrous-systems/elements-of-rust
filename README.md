@@ -1,4 +1,4 @@
-# elements-of-rust
+# :fire: Rust Programming Tipz :fire:
 
 ## Combating Rightward Pressure
 
