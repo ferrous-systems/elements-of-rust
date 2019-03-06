@@ -1,7 +1,5 @@
 # elements-of-rust
 
-style, philosophy
-
 ## Combating Rightward Pressure
 
 ### Basics
