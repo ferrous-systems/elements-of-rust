@@ -67,13 +67,10 @@ Before, painfully avoiding shadowing config:
 ```rust
 fn spawn_threads(config: Arc<Config>) {
     let config1 = Arc::clone(&config);
-    thread::spawn(move || {
-        do_x(config1);
-    });
+    thread::spawn(move || do_x(config1));
+    
     let config2 = Arc::clone(&config);
-    thread::spawn(move || {
-        do_y(config2);
-    });
+    thread::spawn(move || do_y(config2));
 }
 ```
 
@@ -83,15 +80,12 @@ After, no need to invent config_n names:
 fn spawn_threads(config: Arc<Config>) {
     thread::spawn({
         let config = Arc::clone(&config);
-        move || {
-            do_x(config);
-        }
+        move || do_x(config)
     });
+    
     thread::spawn({
         let config = Arc::clone(&config);
-        move || {
-            do_y(config);
-        }
+        move || do_y(config)
     });
 }
 ```
