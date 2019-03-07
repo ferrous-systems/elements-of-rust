@@ -2,6 +2,22 @@
 
 A collection of software engineering techniques for effectively expressing intent with Rust.
 
+- [Cleanup](#cleanup)
+  * [Combating Rightward Pressure](#combating-rightward-pressure)
+    + [Basics](#basics)
+    + [Tuple Matching](#tuple-matching)
+- [Blocks for Clarity](#blocks-for-clarity)
+  * [Closure Capture](#closure-capture)
+- [Ergonomics](#ergonomics)
+  * [Unification and Reading the Error Messages That Matter](#unification-and-reading-the-error-messages-that-matter)
+  * [Write-Compile-Fix Loop Latency](#write-compile-fix-loop-latency)
+  * [Editor support for jumping to compiler errors](#editor-support-for-jumping-to-compiler-errors)
+- [Lockdown](#lockdown)
+    + [Never](#never)
+    + [Making traits unimplementable](#making-traits-unimplementable)
+    + [Deactivating Mutability](#deactivating-mutability)
+    + [`Box<FnOnce>`](#-box-fnonce--)
+
 # Cleanup
 
 This section is about improving clarity.
