@@ -15,42 +15,6 @@ After sparring with the compiler, it's not unusual to stand back and see several
 * Use `?` to flatten error handling, but be careful not to convert errors into top-level enums unless it makes sense to handle them at the same point in your code. Keep separate concerns in separate types.
 * Split combinator chains apart when they grow beyond one line. Assign useful names to the intermediate steps. In many cases, a multi-line combinator chain can be more clearly rewritten as a for-loop.
 
-### Using Blocks
-
-Next time you need to spawn a `move` closure, remember that blocks are
-expressions. Seen in
-[salsa](https://github.com/salsa-rs/salsa/blob/3dc4539c7c34cb12b5d4d1bb0706324cfcaaa7ae/tests/parallel/cancellation.rs#L42-L53) and described in more detail in [Rust pattern: Precise closure capture clauses](http://smallcultfollowing.com/babysteps/blog/2018/04/24/rust-pattern-precise-closure-capture-clauses/#a-more-general-pattern).
-
-```
-// Before
-fn spawn_threads(config: Arc<Config>) {
-    let config1 = Arc::clone(&config);
-    thread::spawn(move || {
-        do_x(config1);
-    });
-    let config2 = Arc::clone(&config);
-    thread::spawn(move || {
-        do_y(config2);
-    });
-}
-
-// After, no need to invent config_n names
-fn spawn_threads(config: Arc<Config>) {
-    thread::spawn({
-        let config = Arc::clone(&config);
-        move || {
-            do_x(config);
-        }
-    });
-    thread::spawn({
-        let config = Arc::clone(&config);
-        move || {
-            do_y(config);
-        }
-    });
-}
-```
-
 ### Tuple Matching
 
 If you find yourself writing code that looks like:
@@ -87,6 +51,45 @@ let c = match (a, b) {
     (None, Some(b)) => another_thing,
     (None, None) => a_fourth_thing,
 };
+```
+
+# Blocks for Clarity
+
+Blocks allow us to detangle complex expressions, and can be used anywhere that a one-liner expression would be valid.
+
+## Closure Capture
+
+Specifying variables for use in a closure can be frustrating, and it's common to see code that jumps through hoops to avoid shadowing variables. This is quite common when cloning an `Arc` before spawning a new thread that will own it. But a closure definition is an expression. Anywhere a closure is accepted, we could use a block that evaluates to a closure. In the example below, we use blocks to avoid shadowing the config that we want to pass to several threads, without creating gross names like `config1`, `config2` etc... Seen in
+[salsa](https://github.com/salsa-rs/salsa/blob/3dc4539c7c34cb12b5d4d1bb0706324cfcaaa7ae/tests/parallel/cancellation.rs#L42-L53) and described in more detail in [Rust pattern: Precise closure capture clauses](http://smallcultfollowing.com/babysteps/blog/2018/04/24/rust-pattern-precise-closure-capture-clauses/#a-more-general-pattern).
+
+```
+// Before
+fn spawn_threads(config: Arc<Config>) {
+    let config1 = Arc::clone(&config);
+    thread::spawn(move || {
+        do_x(config1);
+    });
+    let config2 = Arc::clone(&config);
+    thread::spawn(move || {
+        do_y(config2);
+    });
+}
+
+// After, no need to invent config_n names
+fn spawn_threads(config: Arc<Config>) {
+    thread::spawn({
+        let config = Arc::clone(&config);
+        move || {
+            do_x(config);
+        }
+    });
+    thread::spawn({
+        let config = Arc::clone(&config);
+        move || {
+            do_y(config);
+        }
+    });
+}
 ```
 
 # Ergonomics
