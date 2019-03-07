@@ -62,8 +62,9 @@ Blocks allow us to detangle complex expressions, and can be used anywhere that a
 Specifying variables for use in a closure can be frustrating, and it's common to see code that jumps through hoops to avoid shadowing variables. This is quite common when cloning an `Arc` before spawning a new thread that will own it. But a closure definition is an expression. Anywhere a closure is accepted, we could use a block that evaluates to a closure. In the example below, we use blocks to avoid shadowing the config that we want to pass to several threads, without creating gross names like `config1`, `config2` etc... Seen in
 [salsa](https://github.com/salsa-rs/salsa/blob/3dc4539c7c34cb12b5d4d1bb0706324cfcaaa7ae/tests/parallel/cancellation.rs#L42-L53) and described in more detail in [Rust pattern: Precise closure capture clauses](http://smallcultfollowing.com/babysteps/blog/2018/04/24/rust-pattern-precise-closure-capture-clauses/#a-more-general-pattern).
 
-```
-// Before
+Before, painfully avoiding shadowing config:
+
+```rust
 fn spawn_threads(config: Arc<Config>) {
     let config1 = Arc::clone(&config);
     thread::spawn(move || {
@@ -74,8 +75,11 @@ fn spawn_threads(config: Arc<Config>) {
         do_y(config2);
     });
 }
+```
 
-// After, no need to invent config_n names
+After, no need to invent config_n names:
+
+```rust
 fn spawn_threads(config: Arc<Config>) {
     thread::spawn({
         let config = Arc::clone(&config);
