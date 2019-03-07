@@ -212,7 +212,7 @@ fn main() {
 }
 ```
 
-### Box<FnOnce>
+### `Box<FnOnce>`
 
 Currently, it's not possible to call `Box<FnOnce(T) -> R>` on stable Rust. The
 common workaround is to use `Box<FnMut(T) -> R>`, store internal state inside of
