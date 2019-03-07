@@ -94,19 +94,31 @@ fn spawn_threads(config: Arc<Config>) {
 
 # Ergonomics
 
-This section is about the mechanical aspects of working with Rust. 
+One of the most important aspects of feeling at peace with the Rust programming language is to find harmony with the compiler. We've all introduced a single error and been whipped in the face by dozens of error messages. Even after years of professional Rust usage, it can feel like a cause for celebration when there are no errors after introducing more than a few new lines of code. Remember that the strictness of the compiler is what gives us so much freedom. Rust is useful for building back-ends, front-ends, embedded systems, databases, and so much more because the compiler knows how long our variables are valid for without using a garbage collector at runtime. Any lifetime-related bug that fails to compile in Rust might have been an exploitable memory corruption issue in C or C++. The compiler pain frees us from exploitation and gives us the ability to work on a wider range of projects.
 
 ## Unification and Reading the Error Messages That Matter
 
 Rust requires that arguments and return types are made explicit in function definitions. The compiler will use these explicit types at the boundaries of a function to drive type inference. It will take the input argument types and work from the top of the function toward the bottom. It will take the return type and work its way up. Hopefully they can meet in the middle. The process under the hood is actually a [little more complicated than this](http://smallcultfollowing.com/babysteps/blog/2017/03/25/unification-in-chalk-part-1/) but this simplified model is adequate to reason about this particular subject. The point is, there has to be an unbroken chain of type evidence that connects the input arguments to the return type through the body. When there is a gap in the chain, all ambiguous types will turn into errors. This is partially why rust will emit many pages of errors sometimes when there's actually only a single thing that needs to be fixed.
 
-Programming Rust is a long game. To not fall victim to compiler error fatigue, you need to minimize the effort required to deal with compiler errors. A big part of that is to just filter out the errors that don't matter, and usually the most important error to actually fix is the first error that rustc emits. You can use the `cargo watch` plugin to filter out most of these lines, and run the compiler any time you save like this:
+A big part of avoiding compiler fatigue is to just filter out the errors that don't matter. Start with the first one, and work your way down. See the next section for a command that will do this automatically when your code changes.
+
+## Write-Compile-Fix Loop Latency
+
+Programming Rust is a long game. It's common to see beginners spending lots of energy switching back and forth between their editor and a terminal to run rustc, and then scrolling around to find the next error that they want to fix. This is high-friction, and will tire you out faster than if this was automated.
+
+There is a cargo plugin called `cargo watch` that will look for changes in source files descendent from the current working directory, and then run `cargo check` which skips the LLVM codegen and only looks for compilation errors in your Rust code. It can be installed by typing `cargo install cargo-watch`.
+
+You can use the `cargo watch` plugin to call a specific command when your code changes as well. I like to filter out the lines after the beginning of the error messages, after clearing the terminal:
 
 ```bash
 cargo watch -s 'clear; cargo check --tests --color=always 2>&1 | head -40'
 ```
 
-## Write-Compile-Fix Loop Latency
+This way I just save my code and it shows the next error.
+
+## Editor support for jumping to compiler errors
+
+To go even farther than the last section, most editors have support for jumping to the next Rust error. In vim, you can use the `vim.rust` plugin in combination with Syntastic to automatically run rustc when you save a file, and to jump to errors using a keybind. Emacs users can use `flycheck-rust` for similar functionality. 
 
 # Lockdown
 
