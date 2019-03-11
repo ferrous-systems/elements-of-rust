@@ -1,6 +1,6 @@
 # :fire: Rust Programming Tipz :fire:
 
-A collection of software engineering techniques for effectively expressing intent with Rust. Brought to you by @spacejam and @matklad!
+A collection of software engineering techniques for effectively expressing intent with Rust. Brought to you by [@spacejam](https://github.com/spacejam) and [@matklad](https://github.com/matklad)!
 
 - [Cleanup](#cleanup)
   * [Combating Rightward Pressure](#combating-rightward-pressure)
@@ -140,7 +140,7 @@ This section is about preventing undesirable usage.
 
 ### Never
 
-To make a type that can never be created, simply create an empty enum. Use this where you want to prevent compilation of specific codepaths.
+To make a type that can never be created, simply create an empty enum. Use this where you want to represent something that should never actually exist, but a placeholder is required. This is being brought [into the standard library](https://doc.rust-lang.org/std/primitive.never.html) piece by piece, and it's already possible to have a function return `!` if it exits the process or ends in an infinite loop (important for embedded work where main should never return). This can also be used when working with a Result that will never actually be an `Err` but you need to adhere to that interface.
 
 ```rust
 enum Never {}
