@@ -27,10 +27,12 @@ This section is about improving clarity.
 
 After sparring with the compiler, it's not unusual to stand back and see several nested combinator chains or match statements. Much of the art of writing clean Rust has to do with the judicious application of de-nesting techniques.
 
-### Basics
+### Basics of De-nesting
 
 * Use `?` to flatten error handling, but be careful not to convert errors into top-level enums unless it makes sense to handle them at the same point in your code. Keep separate concerns in separate types.
 * Split combinator chains apart when they grow beyond one line. Assign useful names to the intermediate steps. In many cases, a multi-line combinator chain can be more clearly rewritten as a for-loop.
+* pattern match on the full complex type instead of using nested match statements
+* If your match statement only has a single pattern that you care about, followed by a wildcard, replace the match statement with an `if let My(Match(Pattern(thing))) = matched_thing { /*...*/ }` possibly with an `else` branch if you cared about the wildcard earlier. 
 
 ### Tuple Matching
 
