@@ -16,6 +16,7 @@ A collection of software engineering techniques for effectively expressing inten
     + [Never](#never)
     + [Making traits unimplementable](#making-traits-unimplementable)
     + [Deactivating Mutability](#deactivating-mutability)
+- [Avoiding Limitations](#avoiding-limitations)
     + [`Box<FnOnce>`](#-box-fnonce--)
 
 # Cleanup
@@ -225,6 +226,8 @@ fn main() {
     // finalized.0.a = 666;
 }
 ```
+
+# Avoiding Limitations
 
 ### `Box<FnOnce>`
 
