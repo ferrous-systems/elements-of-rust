@@ -1,6 +1,6 @@
 # :fire: Rust Programming Tipz :fire:
 
-A collection of software engineering techniques for effectively expressing intent with Rust. Brought to you by [@spacejam](https://github.com/spacejam) and [@matklad](https://github.com/matklad)!
+A collection of software engineering techniques for effectively expressing intent with Rust.
 
 - [Cleanup](#cleanup)
   * [Combating Rightward Pressure](#combating-rightward-pressure)
