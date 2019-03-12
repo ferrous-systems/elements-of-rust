@@ -75,14 +75,14 @@ let c = match (a, b) {
 As a special case, matching on tules of booleans can be used to encode decision tables. 
 For example, here's roughly how `cargo new` handles `--bin` and `--lib` arguments:
 
-```
+```rust
 let kind = match (args.is_present("bin"), args.is_present("lib")) {
     (true, true) => failure::bail!("can't specify both lib and binary outputs"),
     (false, true) => NewProjectKind::Lib,
     // default to bin
     (_, false) => NewProjectKind::Bin,
 };
-``
+```
 
 # Blocks for Clarity
 
