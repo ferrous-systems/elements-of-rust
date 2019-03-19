@@ -11,6 +11,7 @@ A collection of software engineering techniques for effectively expressing inten
 - [Ergonomics](#ergonomics)
   * [Unification and Reading the Error Messages That Matter](#unification-and-reading-the-error-messages-that-matter)
   * [Write-Compile-Fix Loop Latency](#write-compile-fix-loop-latency)
+  * [Caching with sccache](#caching-with-sccache)
   * [Editor support for jumping to compiler errors](#editor-support-for-jumping-to-compiler-errors)
 - [Lockdown](#lockdown)
     + [Never](#never)
@@ -144,6 +145,19 @@ cargo watch -s 'clear; cargo check --tests --color=always 2>&1 | head -40'
 ```
 
 This way I just save my code and it shows the next error.
+
+## Caching with sccache
+
+`sccache` is a tool written by Mozilla that supports `ccache`-style build caching for Rust. This is particularly useful if you frequently clean and build projects with lots of dependencies, as normally they would all need to be recompiled, but with `sccache` they will be stored and used to back a cache that is accessible while building any project on your system. It takes care to do the right thing in the presence of different feature flags, versions etc... For projects with lots of dependencies it can make a huge difference over time.
+
+The installation is simple:
+
+```
+cargo install sccache
+export RUSTC_WRAPPER=sccache
+```
+
+It can also be configured to use a remote cache like s3, memcached, redis, etc... which is quite useful for building speedy CI clusters.
 
 ## Editor support for jumping to compiler errors
 
