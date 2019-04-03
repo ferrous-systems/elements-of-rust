@@ -7,9 +7,9 @@ A collection of software engineering techniques for effectively expressing inten
     + [Basics](#basics)
     + [Tuple Matching](#tuple-matching)
   * [Iteration Issues](#iteration-issues)
+    + [Pulling the First Error out of an Iterator over Results](#pulling-the-first-error-out-of-an-iterator-over-results)
     + [Reverse Iterator Range](#reverse-iterator-ranges)
     + [Empty and Singular Iterators](#empty-and-singular-iterators)
-    + [Pulling the First Error out of an Iterator over Results](#pulling-the-first-error-out-of-an-iterator-over-results)
 - [Blocks for Clarity](#blocks-for-clarity)
   * [Closure Capture](#closure-capture)
 - [Ergonomics](#ergonomics)
@@ -90,29 +90,6 @@ let kind = match (args.is_present("bin"), args.is_present("lib")) {
 ```
 ## Iteration Issues
 
-### Reverse Iterator Ranges
-
-In Rust, we can write `for item in 0..50` to go from 0 to 49 but what if we wanted to iterate from 49 to 0? Many of us have written `for item in 50..0` and been surprised that nothing happened. Instead, we can write:
-
-```
-// iterate from 49 to 0
-for item in (0..50).rev() {}
-
-// iterate from 50 to 0
-for item in (0..=50).rev() {}
-
-// iterate from 50 to 1
-for item in (1..=50).rev() {}
-```
-
-Under the hood, when we write a range with this syntax, we are constructing a [`RangeInclusive`](https://doc.rust-lang.org/std/ops/struct.RangeInclusive.html) instead of the normal [`Range`](https://doc.rust-lang.org/std/ops/struct.Range.html). You can also construct ranges for everything with `..`, or have a range be half-open like `..50` or `..=50` or `0..`.
-
-[Seen in Andrea Pessino's tweet](https://twitter.com/AndreaPessino/status/1113212969649725440)
-
-### Empty and Singular Iterators
-
-The standard library also includes helpers for empty and singular iterators, using the functions `std::iter::empty` and `std::iter::once`, which can be a small cleanup of common code like `vec![].into_iter()` or `vec![my_item].into_iter()`.
-
 ### Pulling the First Error out of an Iterator over `Result`s
 
 The `collect` method is extremely powerful, and if you have an iterator of `Result` types, you can use it to either return a collection of the `Ok` items, or the very first `Err` item.
@@ -136,6 +113,28 @@ assert_eq!(Ok(vec![1, 3]), result);
 ```
 
 [Seen in Sunjay's tweet](https://twitter.com/Sunjay03/status/1051689563683545088)
+### Reverse Iterator Ranges
+
+In Rust, we can write `for item in 0..50` to go from 0 to 49 but what if we wanted to iterate from 49 to 0? Many of us have written `for item in 50..0` and been surprised that nothing happened. Instead, we can write:
+
+```
+// iterate from 49 to 0
+for item in (0..50).rev() {}
+
+// iterate from 50 to 0
+for item in (0..=50).rev() {}
+
+// iterate from 50 to 1
+for item in (1..=50).rev() {}
+```
+
+Under the hood, when we write a range with this syntax, we are constructing a [`RangeInclusive`](https://doc.rust-lang.org/std/ops/struct.RangeInclusive.html) instead of the normal [`Range`](https://doc.rust-lang.org/std/ops/struct.Range.html). You can also construct ranges for everything with `..`, or have a range be half-open like `..50` or `..=50` or `0..`.
+
+[Seen in Andrea Pessino's tweet](https://twitter.com/AndreaPessino/status/1113212969649725440)
+
+### Empty and Singular Iterators
+
+The standard library also includes helpers for empty and singular iterators, using the functions `std::iter::empty` and `std::iter::once`, which can be a small cleanup of common code like `vec![].into_iter()` or `vec![my_item].into_iter()`.
 
 # Blocks for Clarity
 
