@@ -6,6 +6,8 @@ A collection of software engineering techniques for effectively expressing inten
   * [Combating Rightward Pressure](#combating-rightward-pressure)
     + [Basics](#basics)
     + [Tuple Matching](#tuple-matching)
+  * [Iteration Issues](#iteration-issues)
+    + [Reverse Iterator Range](#reverse-iterator-ranges)
 - [Blocks for Clarity](#blocks-for-clarity)
   * [Closure Capture](#closure-capture)
 - [Ergonomics](#ergonomics)
@@ -84,6 +86,26 @@ let kind = match (args.is_present("bin"), args.is_present("lib")) {
     (_, false) => NewProjectKind::Bin,
 };
 ```
+## Iteration Issues
+
+### Reverse Iterator Ranges
+
+In Rust, we can write `for item in 0..50` to go from 0 to 49 but what if we wanted to iterate from 49 to 0? Many of us have written `for item in 50..0` and been surprised that nothing happened. Instead, we can write:
+
+```
+// iterate from 49 to 0
+for item in (0..50).rev() {}
+
+// iterate from 50 to 0
+for item in (0..=50).rev() {}
+
+// iterate from 50 to 1
+for item in (1..=50).rev() {}
+```
+
+Under the hood, when we write a range with this syntax, we are constructing a [`RangeInclusive`](https://doc.rust-lang.org/std/ops/struct.RangeInclusive.html) instead of the normal [`Range`](https://doc.rust-lang.org/std/ops/struct.Range.html). You can also construct ranges for everything with `..`, or have a range be half-open like `..50` or `..=50` or `0..`.
+
+[Seen in Andrea Pessino's tweet](https://twitter.com/AndreaPessino/status/1113212969649725440)
 
 # Blocks for Clarity
 
