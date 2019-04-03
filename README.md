@@ -10,6 +10,7 @@ A collection of software engineering techniques for effectively expressing inten
     + [Pulling the First Error out of an Iterator over Results](#pulling-the-first-error-out-of-an-iterator-over-results)
     + [Reverse Iterator Range](#reverse-iterator-ranges)
     + [Empty and Singular Iterators](#empty-and-singular-iterators)
+    + [Enum Variants as Functions](#enum-variants-as-functions)
 - [Blocks for Clarity](#blocks-for-clarity)
   * [Closure Capture](#closure-capture)
 - [Ergonomics](#ergonomics)
@@ -138,6 +139,29 @@ Under the hood, when we write a range with this syntax, we are constructing a [`
 ### Empty and Singular Iterators
 
 The standard library also includes helpers for empty and singular iterators, using the functions `std::iter::empty` and `std::iter::once`, which can be a small cleanup of common code like `vec![].into_iter()` or `vec![my_item].into_iter()`.
+
+### Enum Variants as Functions
+
+You may have received an error message at some point when you wrote an enum variant, but not the members inside it, and it complained about how you supplied a function instead of an enum:
+
+```rust
+enum E {
+    A(u64),
+}
+
+// ERROR: expected enum `E`, found `fn(u64) -> E {E::A}`
+let a: E = E::A;
+```
+
+Well, it turns out that enum tuple variants can be used as functions from their members to an instance of that enum. This can be used to encapsulate items in a collection inside that variant:
+
+```rust
+// create a vector of E::A's using the variant as a constructor function
+let v_of_es: Vec<E> = (0..50).map(E::A).collect();
+
+// create a vector of Options using Some as a constructor function
+let v_of_options: Vec<Option<u64>> = (0..50).map(Some).collect();
+```
 
 # Blocks for Clarity
 
