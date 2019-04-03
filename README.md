@@ -159,6 +159,8 @@ Well, it turns out that enum tuple variants can be used as functions from their 
 // create a vector of E::A's using the variant as a constructor function
 let v_of_es: Vec<E> = (0..50).map(E::A).collect();
 
+// v_of_es is now vec![A(0), A(1), A(2), A(3), A(4), ..]
+
 // create a vector of Options using Some as a constructor function
 let v_of_options: Vec<Option<u64>> = (0..50).map(Some).collect();
 ```
