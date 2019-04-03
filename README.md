@@ -96,7 +96,7 @@ The `collect` method is extremely powerful, and if you have an iterator of `Resu
 
 From the [std docs on collect](https://doc.rust-lang.org/std/iter/trait.Iterator.html#method.collect):
 
-```
+```rust
 let results = [Ok(1), Err("nope"), Ok(3), Err("bad")];
 
 let result: Result<Vec<_>, &str> = results.iter().cloned().collect();
@@ -120,7 +120,7 @@ This functionality is unlocked by the `Result` type implementing `FromIterator<R
 
 In Rust, we can write `for item in 0..50` to go from 0 to 49 but what if we wanted to iterate from 49 to 0? Many of us have written `for item in 50..0` and been surprised that nothing happened. Instead, we can write:
 
-```
+```rust
 // iterate from 49 to 0
 for item in (0..50).rev() {}
 
