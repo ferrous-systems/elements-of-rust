@@ -114,6 +114,8 @@ assert_eq!(Ok(vec![1, 3]), result);
 
 [Seen in Sunjay's tweet](https://twitter.com/Sunjay03/status/1051689563683545088)
 
+This functionality is unlocked by the `Result` type implementing `FromIterator<Result<A, E>> for Result<V, E>` where `V` implements `FromIterator<A>`. This may look a bit hairy, but it means that `collect` (which relies on the `FromIterator` trait for its functionality) can output a `Result` where the success type is some collection that can be built from `A` - the success type of the original results. The error type `E` is the same in both, meaning that the returned `Result` will just return the first encountered error.
+
 ### Reverse Iterator Ranges
 
 In Rust, we can write `for item in 0..50` to go from 0 to 49 but what if we wanted to iterate from 49 to 0? Many of us have written `for item in 50..0` and been surprised that nothing happened. Instead, we can write:
