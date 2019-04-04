@@ -39,6 +39,7 @@ After sparring with the compiler, it's not unusual to stand back and see several
 * Split combinator chains apart when they grow beyond one line. Assign useful names to the intermediate steps. In many cases, a multi-line combinator chain can be more clearly rewritten as a for-loop.
 * pattern match on the full complex type instead of using nested match statements
 * If your match statement only has a single pattern that you care about, followed by a wildcard, replace the match statement with an `if let My(Match(Pattern(thing))) = matched_thing { /*...*/ }` possibly with an `else` branch if you cared about the wildcard earlier. 
+* Run cargo clippy! It can provide many legitimately helpful suggestions for cleaning up your code
 
 ### Tuple Matching
 
