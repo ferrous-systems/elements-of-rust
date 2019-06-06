@@ -205,7 +205,7 @@ fn spawn_threads(config: Arc<Config>) {
 
 # Ergonomics
 
-One of the most important aspects of feeling at peace with the Rust programming language is to find harmony with the compiler. We've all introduced a single error and been whipped in the face by dozens of error messages. Even after years of professional Rust usage, it can feel like a cause for celebration when there are no errors after introducing more than a few new lines of code. Remember that the strictness of the compiler is what gives us so much freedom. Rust is useful for building back-ends, front-ends, embedded systems, databases, and so much more because the compiler knows how long our variables are valid for without using a garbage collector at runtime. Any lifetime-related bug that fails to compile in Rust might have been an exploitable memory corruption issue in C or C++. The compiler pain frees us from exploitation and gives us the ability to work on a wider range of projects.
+One of the most important aspects of feeling productive with the Rust programming language is to find harmony with the compiler. We've all introduced a single error and been whipped in the face by dozens of error messages. Even after years of professional Rust usage, it can feel like a cause for celebration when there are no errors after introducing more than a few new lines of code. Remember that the strictness of the compiler is what gives us so much freedom. Rust is useful for building back-ends, front-ends, embedded systems, databases, and so much more because the compiler knows how long our variables are valid for without using a garbage collector at runtime. Any lifetime-related bug that fails to compile in Rust might have been an exploitable memory corruption issue in C or C++. The compiler pain frees us from exploitation and gives us the ability to work on a wider range of projects.
 
 ## Unification and Reading the Error Messages That Matter
 
@@ -215,7 +215,7 @@ A big part of avoiding compiler fatigue is to just filter out the errors that do
 
 ## Write-Compile-Fix Loop Latency
 
-Programming Rust is a long game. It's common to see beginners spending lots of energy switching back and forth between their editor and a terminal to run rustc, and then scrolling around to find the next error that they want to fix. This is high-friction, and will tire you out faster than if this was automated.
+Programming Rust is a long game. It's common to see beginners spending lots of energy switching back and forth between their editor and a terminal to run rustc, and then scrolling around to find the next error that they want to fix. This is high-friction, and will tire you out faster than if it were automated.
 
 There is a cargo plugin called `cargo watch` that will look for changes in source files descendent from the current working directory, and then run `cargo check` which skips the LLVM codegen and only looks for compilation errors in your Rust code. It can be installed by typing `cargo install cargo-watch`.
 
