@@ -20,7 +20,6 @@ A collection of software engineering techniques for effectively expressing inten
   * [Editor support for jumping to compiler errors](#editor-support-for-jumping-to-compiler-errors)
 - [Lockdown](#lockdown)
     + [Never](#never)
-    + [Making traits unimplementable](#making-traits-unimplementable)
     + [Deactivating Mutability](#deactivating-mutability)
 - [Avoiding Limitations](#avoiding-limitations)
     + [`Box<FnOnce>`](#-box-fnonce--)
