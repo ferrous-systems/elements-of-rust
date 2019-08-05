@@ -258,27 +258,6 @@ enum Never {}
 let never = Never:: // oh yeah, can't actually create one...
 ```
 
-### Making traits unimplementable
-
-If you want to prevent others from implementing your Trait, use the following pattern to "seal" it so that only your implementations will ever exist. Seen in tokio-tls.
-
-```rust
-mod sealed {
-    pub trait Sealed {}
-}
-
-// must have access to sealed::Sealed to
-// implement this trait, which is not possible
-// for other crates etc...
-pub trait MyPublicTrait: sealed::Sealed {}
-
-pub struct MyStruct;
-
-impl sealed::Sealed for MyStruct {}
-
-impl MyPublicTrait for MyStruct {}
-```
-
 ### Deactivating Mutability
 Here's a pattern for disabling mutability for "finalized" objects, even in mutable owned copies of a thing, preventing misuse. Done by wrapping it in a newtype with a private inner value that implements Deref but not DerefMut:
 
