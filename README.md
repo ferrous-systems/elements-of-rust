@@ -4,13 +4,13 @@ A collection of software engineering techniques for effectively expressing inten
 
 - [Cleanup](#cleanup)
   * [Combating Rightward Pressure](#combating-rightward-pressure)
-    + [Basics](#basics)
+    + [Basics of De-nesting](#basics-of-de-nesting)
     + [Tuple Matching](#tuple-matching)
   * [Iteration Issues](#iteration-issues)
-    + [Pulling the First Error out of an Iterator over Results](#pulling-the-first-error-out-of-an-iterator-over-results)
-    + [Reverse Iterator Range](#reverse-iterator-ranges)
+    + [Pulling the First Error out of an Iterator over `Result`s](#pulling-the-first-error-out-of-an-iterator-over-results)
+    + [Reverse Iterator Ranges](#reverse-iterator-ranges)
     + [Empty and Singular Iterators](#empty-and-singular-iterators)
-    + [Enum Variants as Functions](#enum-variants-as-functions)
+    + [Tuple Structs and Enum Tuple Variants as Functions](#tuple-structs-and-enum-tuple-variants-as-functions)
 - [Blocks for Clarity](#blocks-for-clarity)
   * [Closure Capture](#closure-capture)
 - [Ergonomics](#ergonomics)
@@ -22,7 +22,8 @@ A collection of software engineering techniques for effectively expressing inten
     + [Never](#never)
     + [Deactivating Mutability](#deactivating-mutability)
 - [Avoiding Limitations](#avoiding-limitations)
-    + [`Box<FnOnce>`](#-box-fnonce--)
+    + [`Box<FnOnce>`](#boxfnonce)
+    + [Shared Reference Swap Trick](#shared-reference-swap-trick)
 
 # Cleanup
 
