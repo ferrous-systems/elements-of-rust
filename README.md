@@ -78,7 +78,7 @@ let c = match (a, b) {
 };
 ```
 
-As a special case, matching on tules of booleans can be used to encode decision tables.
+As a special case, matching on tuples of booleans can be used to encode decision tables.
 For example, here's roughly how `cargo new` handles `--bin` and `--lib` arguments:
 
 ```rust
