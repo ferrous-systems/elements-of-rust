@@ -140,7 +140,7 @@ Under the hood, when we write a range with this syntax, we are constructing a [`
 
 The standard library also includes helpers for empty and singular iterators, using the functions `std::iter::empty` and `std::iter::once`, which can be a small cleanup of common code like `vec![].into_iter()` or `vec![my_item].into_iter()`.
 
-### Enum Variants as Functions
+### Tuple Structs and Enum Tuple Variants as Functions
 
 You may have received an error message at some point when you wrote an enum variant, but not the members inside it, and it complained about how you supplied a function instead of an enum:
 
@@ -153,7 +153,7 @@ enum E {
 let a: E = E::A;
 ```
 
-Well, it turns out that enum tuple variants can be used as functions from their members to an instance of that enum. This can be used to encapsulate items in a collection inside that variant:
+Well, it turns out that enum tuple variants as well as tuple structs can be used as functions from their members to an instance of that enum or struct. This can be used to encapsulate items in a collection inside that object:
 
 ```rust
 // create a vector of E::A's using the variant as a constructor function
@@ -163,6 +163,11 @@ let v_of_es: Vec<E> = (0..50).map(E::A).collect();
 
 // create a vector of Options using Some as a constructor function
 let v_of_options: Vec<Option<u64>> = (0..50).map(Some).collect();
+
+struct B(u64);
+
+// create a vector of B's using the struct as a constructor function
+let v_of_bs: Vec<B> = (0..50).map(B).collect();
 ```
 
 # Blocks for Clarity
