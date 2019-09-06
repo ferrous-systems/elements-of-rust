@@ -352,3 +352,72 @@ fn test_demo() {
 ```
 
 Note that `self: Box<Self>` is stable and object-safe.
+
+### Shared Reference Swap Trick
+
+`std::cell::Cell` is most commonly used with `Copy` types, because
+`Cell::<T>::get` method requires `T: Copy`. However, a `Cell` can be useful with
+non-copy types as well, thanks to these two methods:
+
+```rust
+fn replace(&self, val: T) -> T;
+
+fn take(&self) -> T
+where
+    T: Default
+;
+```
+
+In particular, using a `Cell<T>` one can implement an analogue of
+`std::mem::swap` (swap trick) or `std::mem::replace` ([Jones's trick][trick]) which
+doesn't need a `&mut` reference.
+
+[trick]: http://giphygifs.s3.amazonaws.com/media/MS0fQBmGGMaRy/giphy.gif
+
+The following example uses `Cell::take` to implement `fmt::Display` for the
+iterator. `fmt::Display` has only `&self`, but we need to consume the iterator
+to print it. `Cell` allows us to do exactly that:
+
+```rust
+use std::{cell::Cell, fmt};
+
+fn display_iter<I>(xs: I) -> impl fmt::Display
+where
+    I: Iterator,
+    I::Item: fmt::Display,
+{
+    struct IterFmt<I>(Cell<Option<I>>);
+
+    impl<I> fmt::Display for IterFmt<I>
+    where
+        I: Iterator,
+        I::Item: fmt::Display,
+    {
+        fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
+            // Advanced Jones's trick: `mem::replace` with `&` reference!
+            let xs: Option<I> = self.0.take();
+            let xs: I = xs.unwrap();
+
+            let mut first = true;
+            for item in xs {
+                if !first {
+                    first = false;
+                    f.write_str(", ")?
+                }
+                fmt::Display::fmt(&item, f)?
+            }
+
+            Ok(())
+        }
+    }
+
+    IterFmt(Cell::new(Some(xs)))
+}
+
+fn main() {
+    let xs = vec![1, 2, 3].into_iter();
+    assert_eq!(display_iter(xs).to_string(), "1, 2, 3");
+}
+```
+
+First seen in [rustc](https://github.com/rust-lang/rust/blob/6b5f9b2e973e438fc1726a2d164d046acd80b170/src/librustdoc/html/format.rs#L1061).
