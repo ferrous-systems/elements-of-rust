@@ -37,7 +37,7 @@ After sparring with the compiler, it's not unusual to stand back and see several
 * Use `?` to flatten error handling, but be careful not to convert errors into top-level enums unless it makes sense to handle them at the same point in your code. Keep separate concerns in separate types.
 * Split combinator chains apart when they grow beyond one line. Assign useful names to the intermediate steps. In many cases, a multi-line combinator chain can be more clearly rewritten as a for-loop.
 * pattern match on the full complex type instead of using nested match statements
-* If your match statement only has a single pattern that you care about, followed by a wildcard, replace the match statement with an `if let My(Match(Pattern(thing))) = matched_thing { /*...*/ }` possibly with an `else` branch if you cared about the wildcard earlier. 
+* If your match statement only has a single pattern that you care about, followed by a wildcard, replace the match statement with an `if let My(Match(Pattern(thing))) = matched_thing { /*...*/ }` possibly with an `else` branch if you cared about the wildcard earlier.
 * Run cargo clippy! It can provide many legitimately helpful suggestions for cleaning up your code
 
 ### Tuple Matching
@@ -78,7 +78,7 @@ let c = match (a, b) {
 };
 ```
 
-As a special case, matching on tules of booleans can be used to encode decision tables. 
+As a special case, matching on tules of booleans can be used to encode decision tables.
 For example, here's roughly how `cargo new` handles `--bin` and `--lib` arguments:
 
 ```rust
@@ -180,7 +180,7 @@ Before, painfully avoiding shadowing config:
 fn spawn_threads(config: Arc<Config>) {
     let config1 = Arc::clone(&config);
     thread::spawn(move || do_x(config1));
-    
+
     let config2 = Arc::clone(&config);
     thread::spawn(move || do_y(config2));
 }
@@ -194,7 +194,7 @@ fn spawn_threads(config: Arc<Config>) {
         let config = Arc::clone(&config);
         move || do_x(config)
     });
-    
+
     thread::spawn({
         let config = Arc::clone(&config);
         move || do_y(config)
@@ -241,7 +241,7 @@ It can also be configured to use a remote cache like s3, memcached, redis, etc..
 
 ## Editor support for jumping to compiler errors
 
-To go even farther than the last section, most editors have support for jumping to the next Rust error. In vim, you can use the `vim.rust` plugin in combination with Syntastic to automatically run rustc when you save a file, and to jump to errors using a keybind. Emacs users can use `flycheck-rust` for similar functionality. 
+To go even farther than the last section, most editors have support for jumping to the next Rust error. In vim, you can use the `vim.rust` plugin in combination with Syntastic to automatically run rustc when you save a file, and to jump to errors using a keybind. Emacs users can use `flycheck-rust` for similar functionality.
 
 # Lockdown
 
@@ -274,13 +274,13 @@ mod config {
             &self.0
         }
     }
-    
+
     #[derive(Default)]
     pub struct Config {
         pub a: usize,
         pub b: String,
     }
-    
+
     impl Config {
         pub fn build(self) -> Immutable<Config> {
             Immutable(self)
@@ -295,19 +295,19 @@ fn main() {
         a: 5,
         b: "yo".into(),
     };
-    
+
     under_construction.a = 6;
-    
+
     let finalized = under_construction.build();
-    
+
     // at this point, you can make tons of copies,
     // and even if somebody has an owned local version,
     // they won't be able to accidentally change some
     // configuration that
     println!("finalized.a: {}", finalized.a);
-    
+
     let mut finalized = finalized;
-    
+
     // the below WON'T work bwahahaha
     // finalized.a = 666;
     // finalized.0.a = 666;
@@ -348,3 +348,72 @@ fn test_demo() {
 ```
 
 Note that `self: Box<Self>` is stable and object-safe.
+
+### Shared Reference Swap Trick
+
+`std::cell::Cell` is most commonly used with `Copy` types, because
+`Cell::<T>::get` method requires `T: Copy`. However, a `Cell` can be useful with
+non-copy types as well, thanks to these two methods:
+
+```rust
+fn replace(&self, val: T) -> T;
+
+fn take(&self) -> T
+where
+    T: Default
+;
+```
+
+In particular, using a `Cell<T>` one can implement an analogue of
+`std::mem::swap` (swap trick) or `std::mem::replace` ([Jones's trick][trick]) which
+doesn't need a `&mut` reference.
+
+[trick]: http://giphygifs.s3.amazonaws.com/media/MS0fQBmGGMaRy/giphy.gif
+
+The following example uses `Cell::take` to implement `fmt::Display` for the
+iterator. `fmt::Display` has only `&self`, but we need to consume the iterator
+to print it. `Cell` allows us to do exactly that:
+
+```rust
+use std::{cell::Cell, fmt};
+
+fn display_iter<I>(xs: I) -> impl fmt::Display
+where
+    I: Iterator,
+    I::Item: fmt::Display,
+{
+    struct IterFmt<I>(Cell<Option<I>>);
+
+    impl<I> fmt::Display for IterFmt<I>
+    where
+        I: Iterator,
+        I::Item: fmt::Display,
+    {
+        fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
+            // Advanced Jones's trick: `mem::replace` with `&` reference!
+            let xs: Option<I> = self.0.take();
+            let xs: I = xs.unwrap();
+
+            let mut first = true;
+            for item in xs {
+                if !first {
+                    first = false;
+                    f.write_str(", ")?
+                }
+                fmt::Display::fmt(&item, f)?
+            }
+
+            Ok(())
+        }
+    }
+
+    IterFmt(Cell::new(Some(xs)))
+}
+
+fn main() {
+    let xs = vec![1, 2, 3].into_iter();
+    assert_eq!(display_iter(xs).to_string(), "1, 2, 3");
+}
+```
+
+First seen in [rustc](https://github.com/rust-lang/rust/blob/6b5f9b2e973e438fc1726a2d164d046acd80b170/src/librustdoc/html/format.rs#L1061).
