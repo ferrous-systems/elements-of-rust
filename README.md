@@ -408,9 +408,9 @@ where
             let mut first = true;
             for item in xs {
                 if !first {
-                    first = false;
                     f.write_str(", ")?
                 }
+                first = false;
                 fmt::Display::fmt(&item, f)?
             }
 
