@@ -24,6 +24,7 @@ A collection of software engineering techniques for effectively expressing inten
 - [Avoiding Limitations](#avoiding-limitations)
     + [`Box<FnOnce>`](#boxfnonce)
     + [Shared Reference Swap Trick](#shared-reference-swap-trick)
+    + [Using Sets As Maps](#using-sets-as-map)
 
 # Cleanup
 
@@ -427,3 +428,88 @@ fn main() {
 ```
 
 First seen in [rustc](https://github.com/rust-lang/rust/blob/6b5f9b2e973e438fc1726a2d164d046acd80b170/src/librustdoc/html/format.rs#L1061).
+
+### Using Sets As Maps
+
+Often, you want to store structs in an associative container keyed by a field of
+the struct. For example
+
+```rust
+use std::collections::HashMap;
+
+struct Person {
+    name: String,
+    age: u32,
+}
+
+fn persons_by_name(persons: Vec<Person>) -> HashMap<String, Person> {
+    persons.into_iter()
+        .map(|p| (p.name.clone(), p))
+        .collect()
+}
+```
+
+The simplest way to do this is to clone the keys, like in the example above.
+The drawback of this approach is that the container contains two copies of each key, which might be a problem if the keys are large or are not `Clone`.
+
+It seems like it should be possible to borrow the key from the struct, but doing this in a straight forward way fails:
+
+```rust
+fn persons_by_name(persons: Vec<Person>) -> HashMap<'??? str, Person>
+```
+
+There isn't any lifetime in sight you can use instead of `???`.
+
+However, it is possible to use a `Set` instead of a `Map` to get a similar effect:
+
+
+```rust
+use std::{
+    borrow::Borrow,
+    collections::HashSet,
+    hash::{Hash, Hasher},
+};
+
+struct Person {
+    name: String,
+    age: u32,
+}
+
+impl Borrow<str> for Person {
+    fn borrow(&self) -> &str {
+        &self.name
+    }
+}
+
+impl PartialEq for Person {
+    fn eq(&self, other: &Person) -> bool {
+        self.name == other.name
+    }
+}
+
+impl Eq for Person {}
+
+impl Hash for Person {
+    fn hash<H: Hasher>(&self, hasher: &mut H) {
+        self.name.hash(hasher)
+    }
+}
+
+fn persons_by_name(persons: Vec<Person>) -> HashSet<Person> {
+    persons.into_iter().collect()
+}
+
+fn get_person_by_name<'p>(persons: &'p HashSet<Person>, name: &str) -> Option<&'p Person> {
+    persons.get(name)
+}
+```
+
+The crux of the trick here is that Rust sets and maps use the `Borrow` trait.
+It allows lookup operations by types different than those stored in the container.
+In this example, by implementing `Borrow<str> for Person`, we get the ability to get a `&Person` out of `&HashSet<Person>` by `&str`.
+
+Note that, because we implement `Borrow`, we **must** override `Eq` and `Hash` to be consistent with it.
+That is, we compare persons by looking only at the name, and ignore the age.
+This is likely not what you want for the rest of your application, so you might need to additionally create an `struct PersonByName(Person)` wrapper type and implement `Borrow` for that.
+
+Sources: the original pattern overheard from [@elizarov](https://github.com/elizarov) in the context of Kotlin, Rust's stdlib docs, [recent conversation](https://www.reddit.com/r/rust/comments/d1ys9b/hashmaplike_data_structure_where_the_keys_are/) on r/rust.
