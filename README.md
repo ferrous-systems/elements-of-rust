@@ -24,7 +24,7 @@ A collection of software engineering techniques for effectively expressing inten
 - [Avoiding Limitations](#avoiding-limitations)
     + [`Box<FnOnce>`](#boxfnonce)
     + [Shared Reference Swap Trick](#shared-reference-swap-trick)
-    + [Using Sets As Maps](#using-sets-as-map)
+    + [Using Sets As Maps](#using-sets-as-maps)
 
 # Cleanup
 
